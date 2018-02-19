@@ -1,0 +1,9 @@
+name: logging
+version: 0.1.0
+
+authors:
+  - Alistair A. Israel <aisrael@gmail.com>
+
+crystal: 0.24.1
+
+license: MIT
