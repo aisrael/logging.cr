@@ -3,11 +3,23 @@ require "./logging/*"
 
 module Logging
   {% for name in Logger::Severity.constants %}
+    macro self.{{name.id.downcase}}(&block)
+      Logging::Config.get_logger(self.to_s).{{name.id.downcase}} block
+    end
     macro self.{{name.id.downcase}}(message)
       Logging::Config.get_logger(self.to_s).{{name.id.downcase}}(%(#{__FILE__[Dir.current.size..-1]}:#{__LINE__} ) + \{{message}})
     end
     macro {{name.id.downcase}}(message)
       Logging::Config.get_logger(self.class.to_s).{{name.id.downcase}}(%(#{__FILE__[Dir.current.size..-1]}:#{__LINE__} ) + \{{message}})
+    end
+    macro {{name.id.downcase}}(&block)
+      logger = Logging::Config.get_logger(self.to_s)
+      if logger.debug?
+        s = begin
+          \{{block.body}}
+        end
+        logger.{{name.id.downcase}}(s)
+      end
     end
   {% end %}
   class Config
